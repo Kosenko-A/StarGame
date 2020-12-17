@@ -1,0 +1,26 @@
+
+test.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+button_play-min
+  rotate: false
+  xy: 1, 1
+  size: 500, 500
+  orig: 500, 500
+  offset: 0, 0
+  index: -1
+button_exit-min
+  rotate: false
+  xy: 503, 208
+  size: 275, 293
+  orig: 275, 293
+  offset: 0, 0
+  index: -1
+star
+  rotate: false
+  xy: 503, 168
+  size: 36, 38
+  orig: 36, 38
+  offset: 0, 0
+  index: -1
