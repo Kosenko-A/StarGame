@@ -1,12 +1,16 @@
 package com.mygdx.game.screen;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.base.BaseScreen;
 import com.mygdx.game.math.Rect;
 import com.mygdx.game.math.Rnd;
+import com.mygdx.game.pool.BulletPool;
 import com.mygdx.game.sprite.Background;
+import com.mygdx.game.sprite.Bullet;
 import com.mygdx.game.sprite.MainShip;
 import com.mygdx.game.sprite.Star;
 
@@ -22,7 +26,12 @@ public class GameScreen extends BaseScreen {
     private TextureAtlas atlas;
     private Star[] stars;
 
+    private BulletPool bulletPool;
+
     private MainShip mainShip;
+
+    private Music music;
+
 
     @Override
     public void show() {
@@ -34,21 +43,19 @@ public class GameScreen extends BaseScreen {
         for (int i = 0; i< STAR_COUNT; i++){
             stars[i] = new Star(atlas, MAX_HEIGHT, MIN_HEIGHT);
         }
-        mainShip = new MainShip(atlas);
+        bulletPool = new BulletPool();
+        mainShip = new MainShip(atlas, bulletPool);
+        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/soundtrack.mp3"));
+        music.setLooping(true);
+        music.play();
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
         update(delta);
+        freeAllDestroyed();
         draw();
-    }
-
-    @Override
-    public void dispose() {
-        bg.dispose();
-        atlas.dispose();
-        super.dispose();
     }
 
     @Override
@@ -59,6 +66,16 @@ public class GameScreen extends BaseScreen {
             stars.resize(worldBounds);
         }
         mainShip.resize(worldBounds);
+    }
+
+    @Override
+    public void dispose() {
+        bg.dispose();
+        atlas.dispose();
+        bulletPool.dispose();
+        music.dispose();
+        mainShip.dispose();
+        super.dispose();
     }
 
     @Override
@@ -89,7 +106,12 @@ public class GameScreen extends BaseScreen {
         for (Star stars: stars) {
             stars.update(delta);
         }
+        bulletPool.updateActiveObjects(delta);
         mainShip.update(delta);
+    }
+
+    private void freeAllDestroyed(){
+        bulletPool.freeAllDestroyedActiveObjects();
     }
 
     private void draw(){
@@ -98,6 +120,7 @@ public class GameScreen extends BaseScreen {
         for (Star stars: stars) {
             stars.draw(batch);
         }
+        bulletPool.drawActiveObjects(batch);
         mainShip.draw(batch);
         batch.end();
     }
