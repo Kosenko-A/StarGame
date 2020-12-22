@@ -6,77 +6,64 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.base.BaseScreen;
+import com.mygdx.game.math.Rect;
+import com.mygdx.game.sprite.Background;
+import com.mygdx.game.sprite.Logo;
 
 public class MenuScreen extends BaseScreen {
 
+    private Texture bg;
+    private Background background;
+
     private Texture img;
-    private Texture spaceship;
-    private Vector2 pos;
-    private Vector2 subVec;
-    private Vector2 wayVec;
+    private Logo logo;
+
+
 
     @Override
     public void show() {
-        img = new Texture("spaceFon.png");
-        spaceship = new Texture("spaceship.png");
-        pos = new Vector2();
-        subVec = new Vector2(pos);
-        wayVec = new Vector2();
+        img = new Texture("spaceship.png");
+        bg = new Texture("spaceFon.png");
+        background = new Background(bg);
+        logo = new Logo(img);
         super.show();
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.begin();
-        batch.draw(img, 0, 0, 2000, 2000);
-        batch.draw(spaceship, pos.x, pos.y, 250,250);
-        batch.end();
-        if((int)subVec.x != (int)pos.x && (int)subVec.y != (int)pos.y){
-            pos.add(wayVec);
-        }
         super.render(delta);
+        update(delta);
+        draw();
     }
 
     @Override
     public void dispose() {
         img.dispose();
+        bg.dispose();
         super.dispose();
     }
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        screenY = Gdx.graphics.getHeight() - screenY;
-        subVec.set(screenX, screenY);
-        wayVec.set(subVec.x-pos.x, subVec.y-pos.y);
-        wayVec.nor();
-        return super.touchDown(screenX, screenY,pointer, button);
+    public void resize(Rect worldBounds) {
+        background.resize(worldBounds);
+        logo.resize(worldBounds);
     }
 
     @Override
-    public boolean keyDown(int keycode) {
-        switch (keycode) {
-            case Input.Keys.UP:
-                pos.y += 10;
-                break;
-            case Input.Keys.DOWN:
-                pos.y -= 10;
-                break;
-            case Input.Keys.RIGHT:
-                pos.x += 10;
-                break;
-            case Input.Keys.LEFT:
-                pos.x -= 10;
-                break;
-        }
-        return super.keyDown(keycode);
+    public boolean touchDown(Vector2 touch, int pointer, int button) {
+        logo.touchDown(touch, pointer, button);
+        return super.touchDown(touch, pointer, button);
+    }
+    private void update (float delta){
+        logo.update(delta);
     }
 
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        pos.set(screenX, Gdx.graphics.getHeight() - screenY);
-        return super.touchDragged(screenX, screenY, pointer);
+    private void draw (){
+        //Gdx.gl.glClearColor(1, 1, 1, 1);
+        //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
+        background.draw(batch);
+        logo.draw(batch);
+        batch.end();
     }
-
 }
