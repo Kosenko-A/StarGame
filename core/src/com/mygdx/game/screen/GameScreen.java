@@ -2,6 +2,7 @@ package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
@@ -9,10 +10,17 @@ import com.mygdx.game.base.BaseScreen;
 import com.mygdx.game.math.Rect;
 import com.mygdx.game.math.Rnd;
 import com.mygdx.game.pool.BulletPool;
+import com.mygdx.game.pool.EnemyPool;
+import com.mygdx.game.pool.ExplosionPool;
 import com.mygdx.game.sprite.Background;
 import com.mygdx.game.sprite.Bullet;
+import com.mygdx.game.sprite.Enemy;
+import com.mygdx.game.sprite.Explosion;
 import com.mygdx.game.sprite.MainShip;
 import com.mygdx.game.sprite.Star;
+import com.mygdx.game.utils.EnemyEmitter;
+
+import java.util.List;
 
 public class GameScreen extends BaseScreen {
 
@@ -27,11 +35,16 @@ public class GameScreen extends BaseScreen {
     private Star[] stars;
 
     private BulletPool bulletPool;
+    private EnemyPool enemyPool;
+    private ExplosionPool explosionPool;
+
+    private EnemyEmitter enemyEmitter;
 
     private MainShip mainShip;
 
     private Music music;
-
+    private Sound bulletSound;
+    private Sound explosionSound;
 
     @Override
     public void show() {
@@ -44,7 +57,12 @@ public class GameScreen extends BaseScreen {
             stars[i] = new Star(atlas, MAX_HEIGHT, MIN_HEIGHT);
         }
         bulletPool = new BulletPool();
-        mainShip = new MainShip(atlas, bulletPool);
+        explosionSound = Gdx.audio.newSound(Gdx.files.internal("sounds/boom.mp3"));
+        explosionPool = new ExplosionPool(atlas, explosionSound);
+        enemyPool = new EnemyPool(bulletPool, explosionPool, worldBounds);
+        mainShip = new MainShip(atlas, bulletPool, explosionPool);
+        bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy_sound.mp3"));
+        enemyEmitter = new EnemyEmitter(atlas, worldBounds, bulletSound, enemyPool);
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/soundtrack.mp3"));
         music.setLooping(true);
         music.play();
@@ -54,6 +72,7 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         super.render(delta);
         update(delta);
+        checkCollision();
         freeAllDestroyed();
         draw();
     }
@@ -75,6 +94,9 @@ public class GameScreen extends BaseScreen {
         bulletPool.dispose();
         music.dispose();
         mainShip.dispose();
+        enemyPool.dispose();
+        explosionPool.dispose();
+        explosionSound.dispose();
         super.dispose();
     }
 
@@ -108,10 +130,32 @@ public class GameScreen extends BaseScreen {
         }
         bulletPool.updateActiveObjects(delta);
         mainShip.update(delta);
+        enemyPool.updateActiveObjects(delta);
+        enemyEmitter.generate(delta);
+        explosionPool.updateActiveObjects(delta);
+    }
+
+    private void checkCollision(){
+        List<Enemy> enemyList = enemyPool.getActiveObjects();
+        List<Bullet> bulletList = bulletPool.getActiveObjects();
+        for (Enemy enemy : enemyList) {
+            float minDist = enemy.getHalfWidth() + mainShip.getHalfWidth();
+            if (mainShip.pos.dst(enemy.pos) < minDist) {
+                enemy.destroy();
+            }
+            for (Bullet bullet : bulletList) {
+                if ((bullet.getOwner() == mainShip) && (!bullet.isOutside(enemy))){
+                    enemy.destroy();
+                    bullet.destroy();
+                }
+            }
+        }
     }
 
     private void freeAllDestroyed(){
         bulletPool.freeAllDestroyedActiveObjects();
+        enemyPool.freeAllDestroyedActiveObjects();
+        explosionPool.freeAllDestroyedActiveObjects();
     }
 
     private void draw(){
@@ -122,6 +166,8 @@ public class GameScreen extends BaseScreen {
         }
         bulletPool.drawActiveObjects(batch);
         mainShip.draw(batch);
+        enemyPool.drawActiveObjects(batch);
+        explosionPool.drawActiveObjects(batch);
         batch.end();
     }
 
