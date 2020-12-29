@@ -11,6 +11,9 @@ import com.mygdx.game.sprite.Bullet;
 import com.mygdx.game.sprite.Explosion;
 
 public class Ship extends Sprite{
+
+    protected   static final  float DAMAGE_ANIMATE_INTERVAL = 0.1F;
+
     protected final BulletPool bulletPool;
     private final ExplosionPool explosionPool;
 
@@ -29,10 +32,12 @@ public class Ship extends Sprite{
 
     protected float reloadInterval;
     protected float reloadTimer;
+    protected float damageAnimateTimer;
 
     public Ship(BulletPool bulletPool, ExplosionPool explosionPool){
         this.bulletPool = bulletPool;
         this.explosionPool = explosionPool;
+        damageAnimateTimer = DAMAGE_ANIMATE_INTERVAL;
     }
     public Ship(TextureRegion region, int rows, int cols, int frames, BulletPool bulletPool, ExplosionPool explosionPool){
         super(region, rows, cols, frames);
@@ -48,12 +53,30 @@ public class Ship extends Sprite{
             reloadTimer = 0f;
             shoot();
         }
+        damageAnimateTimer += delta;
+        if (damageAnimateTimer>=DAMAGE_ANIMATE_INTERVAL){
+            frame = 0;
+        }
     }
 
     @Override
     public void destroy() {
         super.destroy();
         boom();
+    }
+
+    public void damage(int damage){
+        this.hp -= damage;
+        if(hp<=0){
+            hp = 0;
+            destroy();
+        }
+        frame = 1;
+        damageAnimateTimer = 0f;
+    }
+
+    public int getDamage() {
+        return damage;
     }
 
     private void shoot(){

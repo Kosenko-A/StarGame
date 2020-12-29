@@ -14,7 +14,7 @@ import com.mygdx.game.pool.ExplosionPool;
 
 public class MainShip extends Ship {
 
-    private static int HP = 100;
+    private static int HP = 10;
 
     private static final float RELOAD_INTERVAL = 0.2f;
 
@@ -41,6 +41,19 @@ public class MainShip extends Ship {
         v0 = new Vector2(0.5f, 0);
         reloadInterval = RELOAD_INTERVAL;
         hp = HP;
+    }
+
+    public void startNewGame(){
+        pressedRight= false;
+        pressedLeft = false;
+        leftPointer = INVALID_POINTER;
+        rightPointer = INVALID_POINTER;
+        stop();
+        this.pos.x = worldBounds.pos.x;
+        hp = HP;
+        flushDestroy();
+        frame = 0;
+        damageAnimateTimer = DAMAGE_ANIMATE_INTERVAL;
     }
 
     @Override
@@ -145,6 +158,13 @@ public class MainShip extends Ship {
 
     public void dispose(){
         bulletSound.dispose();
+    }
+
+    public boolean isBulletCollision(Bullet bullet){
+        return !(bullet.getRight()<getLeft()
+                || bullet.getLeft() > getRight()
+                || bullet.getBottom() > pos.y
+                || bullet.getTop() < getBottom());
     }
 
     private void moveLeft(){

@@ -60,4 +60,11 @@ public class Enemy extends Ship {
             setHeightProportion(height);
             this.hp = hp;
     }
+
+    public boolean isBulletCollision(Bullet bullet){
+        return !(bullet.getRight()<getLeft()
+        || bullet.getLeft() > getRight()
+        || bullet.getBottom() > getTop()
+        || bullet.getTop() < pos.y);
+    }
 }
