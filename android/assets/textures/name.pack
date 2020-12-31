@@ -1,0 +1,12 @@
+
+name.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+game_name
+  rotate: false
+  xy: 1, 1
+  size: 612, 408
+  orig: 612, 408
+  offset: 0, 0
+  index: -1

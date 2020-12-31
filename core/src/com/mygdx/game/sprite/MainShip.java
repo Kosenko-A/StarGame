@@ -14,7 +14,7 @@ import com.mygdx.game.pool.ExplosionPool;
 
 public class MainShip extends Ship {
 
-    private static int HP = 10;
+    private static int HP = 50;
 
     private static final float RELOAD_INTERVAL = 0.2f;
 
