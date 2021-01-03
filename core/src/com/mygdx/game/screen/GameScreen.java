@@ -305,7 +305,7 @@ public class GameScreen extends BaseScreen {
 
     private void setHighScore(int top, int frags) {
         if (frags>top) {
-            FileHandle file = Gdx.files.internal("files/top.txt");
+            FileHandle file = Gdx.files.local("files/top.txt");
             String score = Integer.toString(frags);
             file.writeString(score, false);
         }
