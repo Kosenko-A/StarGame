@@ -15,6 +15,7 @@ import com.mygdx.game.math.Rnd;
 import com.mygdx.game.sprite.Background;
 import com.mygdx.game.sprite.ButtonExit;
 import com.mygdx.game.sprite.ButtonPlay;
+import com.mygdx.game.sprite.NameGame;
 import com.mygdx.game.sprite.Star;
 
 public class MenuScreen extends BaseScreen {
@@ -24,10 +25,13 @@ public class MenuScreen extends BaseScreen {
     private static final float MAX_HEIGHT = 0.05f;
     private static final float MIN_HEIGHT = 0.01f;
 
+    private NameGame nameGame;
+
     private Texture bg;
     private Background background;
 
     private TextureAtlas atlas;
+    private TextureAtlas name;
     private Star[] stars;
 
     private ButtonExit buttonExit;
@@ -46,10 +50,12 @@ public class MenuScreen extends BaseScreen {
         bg = new Texture("textures/spaceFon.png");
         background = new Background(bg);
         atlas = new TextureAtlas("textures/test.pack");
+        name = new TextureAtlas("textures/name.pack");
         stars = new Star[STAR_COUNT];
         for (int i = 0; i< STAR_COUNT; i++){
             stars[i] = new Star(atlas, MAX_HEIGHT, MIN_HEIGHT );
         }
+        nameGame = new NameGame(name);
         buttonExit = new ButtonExit(atlas);
         buttonPlay = new ButtonPlay(atlas, game);
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/menu_sound.mp3"));
@@ -69,6 +75,7 @@ public class MenuScreen extends BaseScreen {
     public void dispose() {
         bg.dispose();
         atlas.dispose();
+        name.dispose();
         music.dispose();
         super.dispose();
     }
@@ -76,6 +83,7 @@ public class MenuScreen extends BaseScreen {
     @Override
     public void resize(Rect worldBounds) {
         background.resize(worldBounds);
+        nameGame.resize(worldBounds);
         for (Star stars: stars){
             stars.resize(worldBounds);
         }
@@ -106,6 +114,7 @@ public class MenuScreen extends BaseScreen {
     private void draw (){
         batch.begin();
         background.draw(batch);
+        nameGame.draw(batch);
         for (Star stars: stars) {
             stars.draw(batch);
         }

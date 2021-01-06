@@ -15,19 +15,19 @@ public class EnemyEmitter {
 
     private static final float ENEMY_SMALL_HEIGHT = 0.1f;
     private static final float ENEMY_SMALL_BULLET_HEIGHT = 0.01f;
-    private static final int ENEMY_SMALL_BULLET_DAMAGE = 1;
+    private static int ENEMY_SMALL_BULLET_DAMAGE = 1;
     private static final float ENEMY_SMALL_RELOAD_INTERVAL = 3f;
     private static final int ENEMY_SMALL_HP = 1;
 
     private static final float ENEMY_MIDDLE_HEIGHT = 0.15f;
     private static final float ENEMY_MIDDLE_BULLET_HEIGHT = 0.02f;
-    private static final int ENEMY_MIDDLE_BULLET_DAMAGE = 5;
+    private static int ENEMY_MIDDLE_BULLET_DAMAGE = 5;
     private static final float ENEMY_MIDDLE_RELOAD_INTERVAL = 4f;
     private static final int ENEMY_MIDDLE_HP = 5;
 
     private static final float ENEMY_BIG_HEIGHT = 0.2f;
     private static final float ENEMY_BIG_BULLET_HEIGHT = 0.04f;
-    private static final int ENEMY_BIG_BULLET_DAMAGE = 10;
+    private static int ENEMY_BIG_BULLET_DAMAGE = 10;
     private static final float ENEMY_BIG_RELOAD_INTERVAL = 2f;
     private static final int ENEMY_BIG_HP = 10;
 
@@ -52,6 +52,8 @@ public class EnemyEmitter {
 
     private float generateTimer;
 
+    private int level = 1;
+
     public EnemyEmitter(TextureAtlas atlas, Rect worldbounds, Sound bulletSound, EnemyPool enemyPool){
         this.bulletRegion = atlas.findRegion("bulletEnemy");
         TextureRegion enemySmallRegion = atlas.findRegion("enemy0");
@@ -65,13 +67,20 @@ public class EnemyEmitter {
         this.enemyPool = enemyPool;
     }
 
-    public void generate(float delta){
+    public int getLevel() {
+        return level;
+    }
+
+    public void generate(float delta, int frags){
+        level = frags/10 +1;
         generateTimer += delta;
         if (generateTimer >= GENERATE_INTERVAL){
             generateTimer = 0f;
             Enemy enemy = enemyPool.obtain();
             float type = (float)Math.random();
             if (type < 0.5f) {
+                int damage = ENEMY_SMALL_BULLET_DAMAGE;
+                ENEMY_SMALL_BULLET_DAMAGE = damage * level;
                 enemy.set(enemySmallRegions,
                         bulletRegion,
                         bulletSound,
@@ -84,6 +93,8 @@ public class EnemyEmitter {
                         ENEMY_SMALL_HP
                 );
             } else if (type<0.8f){
+                int damage = ENEMY_MIDDLE_BULLET_DAMAGE;
+                ENEMY_MIDDLE_BULLET_DAMAGE = damage * level;
                 enemy.set(enemyMiddleRegions,
                         bulletRegion,
                         bulletSound,
@@ -96,6 +107,8 @@ public class EnemyEmitter {
                         ENEMY_MIDDLE_HP
                 );
             }else{
+                int damage = ENEMY_BIG_BULLET_DAMAGE;
+                ENEMY_BIG_BULLET_DAMAGE = damage * level;
                 enemy.set(enemyMiddleRegions,
                         bulletRegion,
                         bulletSound,
