@@ -12,7 +12,7 @@ public class NameGame extends Sprite {
 
     @Override
     public void resize(Rect worldBounds) {
-        setTop(0.5f);
-        setHeightProportion(0.66f);
+        setTop(0.4f);
+        setHeightProportion(0.55f);
     }
 }

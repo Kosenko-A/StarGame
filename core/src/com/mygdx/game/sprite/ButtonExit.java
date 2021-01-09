@@ -9,7 +9,7 @@ import com.mygdx.game.math.Rect;
 public class ButtonExit extends BaseButton {
 
     private static final float MARGIN = 0.05f;
-    private static final float HEIGHT = 0.2f;
+    private static final float HEIGHT = 0.18f;
 
     public ButtonExit(TextureAtlas atlas) {
         super(atlas.findRegion("button_exit-min"));

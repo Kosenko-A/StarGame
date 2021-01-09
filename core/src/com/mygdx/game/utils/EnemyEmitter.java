@@ -11,25 +11,25 @@ import com.mygdx.game.sprite.Enemy;
 
 public class EnemyEmitter {
 
-    private static final float GENERATE_INTERVAL = 4f;
+    private static float GENERATE_INTERVAL = 4f;
 
     private static final float ENEMY_SMALL_HEIGHT = 0.1f;
     private static final float ENEMY_SMALL_BULLET_HEIGHT = 0.01f;
     private static int ENEMY_SMALL_BULLET_DAMAGE = 1;
-    private static final float ENEMY_SMALL_RELOAD_INTERVAL = 3f;
-    private static final int ENEMY_SMALL_HP = 1;
+    private static float ENEMY_SMALL_RELOAD_INTERVAL = 3f;
+    private static int ENEMY_SMALL_HP = 1;
 
     private static final float ENEMY_MIDDLE_HEIGHT = 0.15f;
     private static final float ENEMY_MIDDLE_BULLET_HEIGHT = 0.02f;
     private static int ENEMY_MIDDLE_BULLET_DAMAGE = 5;
-    private static final float ENEMY_MIDDLE_RELOAD_INTERVAL = 4f;
-    private static final int ENEMY_MIDDLE_HP = 5;
+    private static float ENEMY_MIDDLE_RELOAD_INTERVAL = 4f;
+    private static int ENEMY_MIDDLE_HP = 5;
 
     private static final float ENEMY_BIG_HEIGHT = 0.2f;
     private static final float ENEMY_BIG_BULLET_HEIGHT = 0.04f;
     private static int ENEMY_BIG_BULLET_DAMAGE = 10;
-    private static final float ENEMY_BIG_RELOAD_INTERVAL = 2f;
-    private static final int ENEMY_BIG_HP = 10;
+    private static float ENEMY_BIG_RELOAD_INTERVAL = 2f;
+    private static int ENEMY_BIG_HP = 10;
 
     private final Vector2 enemySmallV = new Vector2(0, -0.2f);
     private final Vector2 enemySmallBulletV = new Vector2(0, -0.3f);
@@ -74,6 +74,25 @@ public class EnemyEmitter {
     public void generate(float delta, int frags){
         level = frags/10 +1;
         generateTimer += delta;
+        if (level<3){
+            generateTimer+=level/3;
+        } else {
+            generateTimer += 2/3;
+            if (level<5){
+                ENEMY_SMALL_RELOAD_INTERVAL= 2f;
+                ENEMY_MIDDLE_RELOAD_INTERVAL= 2f;
+                ENEMY_BIG_RELOAD_INTERVAL= 1.5f;
+            } else if (level > 4){
+                ENEMY_SMALL_RELOAD_INTERVAL = 1f;
+                ENEMY_MIDDLE_RELOAD_INTERVAL = 1.5f;
+                ENEMY_BIG_RELOAD_INTERVAL = 1f;
+                if (level > 7){
+                    ENEMY_SMALL_HP = 3;
+                    ENEMY_MIDDLE_HP = 8;
+                    ENEMY_BIG_HP = 15;
+                }
+            }
+        }
         if (generateTimer >= GENERATE_INTERVAL){
             generateTimer = 0f;
             Enemy enemy = enemyPool.obtain();

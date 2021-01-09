@@ -35,7 +35,7 @@ public class GameScreen extends BaseScreen {
     private static  final float MAX_HEIGHT = 0.009f;
     private static final float MIN_HEIGHT = 0.005f;
 
-    private static final float FONT_SIZE = 0.03f;
+    private static final float FONT_SIZE = 0.026f;
     private static final float MARGIN = 0.01f;
 
     private static final String FRAGS = "Frags: ";
@@ -62,8 +62,6 @@ public class GameScreen extends BaseScreen {
     private Sound bulletSound;
     private Sound explosionSound;
 
-    private int top;
-    private String topStr;
 
 
     private State state;
@@ -76,6 +74,8 @@ public class GameScreen extends BaseScreen {
     private StringBuilder sbHP;
     private StringBuilder sbLevel;
     private StringBuilder sbTop;
+
+    public FileHandle file = Gdx.files.local("top.txt");
 
     @Override
     public void show() {
@@ -168,6 +168,16 @@ public class GameScreen extends BaseScreen {
     }
 
     @Override
+    public boolean touchDragget(Vector2 touch, int pointer) {
+        if (state == State.PLAYING) {
+            mainShip.touchDragget(touch, pointer);
+        } else if (state == State.GAME_OVER){
+            buttonNewGame.touchDragget(touch, pointer);
+        }
+        return super.touchDragget(touch, pointer);
+    }
+
+    @Override
     public boolean keyDown(int keycode) {
         if (state == State.PLAYING) {
             mainShip.keyDown(keycode);
@@ -189,8 +199,6 @@ public class GameScreen extends BaseScreen {
         bulletPool.freeAll();
         explosionPool.freeAll();
         frags = 0;
-
-
         state = State.PLAYING;
     }
 
@@ -241,7 +249,9 @@ public class GameScreen extends BaseScreen {
                     enemy.damage(bullet.getDamage());
                     if (enemy.isDestroyed()){
                         frags++;
-                        setHighScore(getHighScore(),frags);
+                        if (frags >0) {
+                            setHighScore(getHighScore(), frags);
+                        }
                     }
                     bullet.destroy();
                     return;
@@ -294,22 +304,20 @@ public class GameScreen extends BaseScreen {
 
         sbTop.setLength(0);
         font.draw(batch, sbTop.append(TOP).append(getHighScore()), worldBounds.getLeft() + MARGIN, worldBounds.getTop() - 0.05f);
+
+
     }
 
-    private int getHighScore() {
-        FileHandle file = Gdx.files.internal("files/top.txt");
-        topStr = file.readString();
-        top = Integer.parseInt(topStr);
+    public int getHighScore() {
+        String topStr = file.readString();
+        int top = Integer.parseInt(topStr);
         return top;
     }
 
-    private void setHighScore(int top, int frags) {
+    public void setHighScore(int top, int frags) {
         if (frags>top) {
-            FileHandle file = Gdx.files.local("files/top.txt");
             String score = Integer.toString(frags);
             file.writeString(score, false);
         }
     }
-
-
 }

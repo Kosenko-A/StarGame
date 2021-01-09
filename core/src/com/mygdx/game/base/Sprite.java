@@ -49,7 +49,7 @@ public class Sprite extends Rect {
         return false;
     }
 
-    public boolean touchDragget(Vector2 touch, int pointer, int button){
+    public boolean touchDragget(Vector2 touch, int pointer){
         return false;
     }
 
