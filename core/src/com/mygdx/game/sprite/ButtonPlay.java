@@ -8,7 +8,7 @@ import com.mygdx.game.screen.GameScreen;
 
 public class ButtonPlay extends BaseButton {
 
-    private static final float HEIGHT = 0.3f;
+    private static final float HEIGHT = 0.28f;
     private final Game game;
 
     public ButtonPlay(TextureAtlas atlas, Game game) {

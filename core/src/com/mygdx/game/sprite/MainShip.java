@@ -14,7 +14,7 @@ import com.mygdx.game.pool.ExplosionPool;
 
 public class MainShip extends Ship {
 
-    private static int HP = 50;
+    private static int HP = 100;
 
     private static final float RELOAD_INTERVAL = 0.2f;
 
@@ -154,6 +154,24 @@ public class MainShip extends Ship {
             }
         }
         return super.touchUp(touch, pointer, button);
+    }
+
+    @Override
+    public boolean touchDragget(Vector2 touch, int pointer) {
+        if (touch.x < worldBounds.pos.x){
+            if (leftPointer != INVALID_POINTER){
+                return false;
+            }
+            leftPointer = pointer;
+            moveLeft();
+        } else {
+            if (rightPointer != INVALID_POINTER){
+                return false;
+            }
+            rightPointer = pointer;
+            moveRight();
+        }
+        return false;
     }
 
     public void dispose(){
