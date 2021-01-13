@@ -49,10 +49,6 @@ public class Sprite extends Rect {
         return false;
     }
 
-    public boolean touchDragget(Vector2 touch, int pointer){
-        return false;
-    }
-
     public void draw(SpriteBatch batch){
         batch.draw(
                 regions[frame],
