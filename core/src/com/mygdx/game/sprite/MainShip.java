@@ -156,24 +156,6 @@ public class MainShip extends Ship {
         return super.touchUp(touch, pointer, button);
     }
 
-    @Override
-    public boolean touchDragget(Vector2 touch, int pointer) {
-        if (touch.x < worldBounds.pos.x){
-            if (leftPointer != INVALID_POINTER){
-                return false;
-            }
-            leftPointer = pointer;
-            moveLeft();
-        } else {
-            if (rightPointer != INVALID_POINTER){
-                return false;
-            }
-            rightPointer = pointer;
-            moveRight();
-        }
-        return false;
-    }
-
     public void dispose(){
         bulletSound.dispose();
     }

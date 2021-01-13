@@ -1,6 +1,7 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
@@ -24,6 +25,7 @@ import com.mygdx.game.utils.EnemyEmitter;
 import com.mygdx.game.utils.Font;
 
 import java.util.List;
+import java.util.Map;
 import java.util.logging.FileHandler;
 
 public class GameScreen extends BaseScreen {
@@ -74,8 +76,6 @@ public class GameScreen extends BaseScreen {
     private StringBuilder sbHP;
     private StringBuilder sbLevel;
     private StringBuilder sbTop;
-
-    public FileHandle file = Gdx.files.local("top.txt");
 
     @Override
     public void show() {
@@ -165,16 +165,6 @@ public class GameScreen extends BaseScreen {
             buttonNewGame.touchUp(touch, pointer, button);
         }
         return super.touchUp(touch, pointer, button);
-    }
-
-    @Override
-    public boolean touchDragget(Vector2 touch, int pointer) {
-        if (state == State.PLAYING) {
-            mainShip.touchDragget(touch, pointer);
-        } else if (state == State.GAME_OVER){
-            buttonNewGame.touchDragget(touch, pointer);
-        }
-        return super.touchDragget(touch, pointer);
     }
 
     @Override
@@ -305,16 +295,17 @@ public class GameScreen extends BaseScreen {
         sbTop.setLength(0);
         font.draw(batch, sbTop.append(TOP).append(getHighScore()), worldBounds.getLeft() + MARGIN, worldBounds.getTop() - 0.05f);
 
-
     }
 
     public int getHighScore() {
+        FileHandle file = Gdx.files.local("files/top.txt");
         String topStr = file.readString();
         int top = Integer.parseInt(topStr);
         return top;
     }
 
     public void setHighScore(int top, int frags) {
+        FileHandle file = Gdx.files.local("files/top.txt");
         if (frags>top) {
             String score = Integer.toString(frags);
             file.writeString(score, false);
