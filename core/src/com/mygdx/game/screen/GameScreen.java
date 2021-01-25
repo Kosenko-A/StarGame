@@ -299,7 +299,9 @@ public class GameScreen extends BaseScreen {
 
     public int getHighScore() {
         FileHandle file = Gdx.files.local("files/top.txt");
-        String topStr = file.readString();
+        String topStr = "0";
+        if(file.exists()) topStr = file.readString();
+        else file.writeString("0", false);
         int top = Integer.parseInt(topStr);
         return top;
     }
